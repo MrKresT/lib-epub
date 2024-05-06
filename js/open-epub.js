@@ -1,15 +1,30 @@
 (function opens() {
   let params = URLSearchParams && new URLSearchParams(document.location.search.substring(1));
+  //передаем урл какой-то книги
   let url = params && params.get("url") && decodeURIComponent(params.get("url"));
+  //страница
   let currentSectionIndex = (params && params.get("loc")) ? params.get("loc") : undefined;
+  //двухколонковость (both, none)
   let spread = (params && params.get("spread")) ? params.get("spread") : 'none';
+  let width = (params && params.get("width")) ? params.get("width") : '100%';
+  let height = (params && params.get("height")) ? params.get("height") : undefined;
+  let manager = (params && params.get("manager")) ? params.get("manager") : 'default';
+
 
 // Load the opf
   let book = ePub(url || "https://s3.amazonaws.com/moby-dick/moby-dick.epub");
   let rendition = book.renderTo("viewer", {
-    width: "100%",
-    height: "100%",
+    width: width,
+    height: height,
     spread: spread,
+    manager: manager,
+    // flow: "paginated",
+    // manager: "continuous",
+    // flow: "paginated",
+    // width: "100%",
+    // height: "100%",
+    // snap: true
+
   });
 
   rendition.display(currentSectionIndex);
@@ -45,6 +60,16 @@
 
     rendition.on("keyup", keyListener);
     document.addEventListener("keyup", keyListener, false);
+
+    window.addEventListener("swipeleft", function (event) {
+      console.log('<----');
+      rendition.next();
+    });
+
+    window.addEventListener("swiperight", function (event) {
+      console.log('---->');
+      rendition.prev();
+    });
 
   })
 
