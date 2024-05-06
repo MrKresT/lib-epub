@@ -1,33 +1,35 @@
 (function opens() {
-  var params = URLSearchParams && new URLSearchParams(document.location.search.substring(1));
-  var url = params && params.get("url") && decodeURIComponent(params.get("url"));
-  var currentSectionIndex = (params && params.get("loc")) ? params.get("loc") : undefined;
+  let params = URLSearchParams && new URLSearchParams(document.location.search.substring(1));
+  let url = params && params.get("url") && decodeURIComponent(params.get("url"));
+  let currentSectionIndex = (params && params.get("loc")) ? params.get("loc") : undefined;
+  let spread = (params && params.get("spread")) ? params.get("spread") : 'none';
 
 // Load the opf
-  var book = ePub(url || "https://s3.amazonaws.com/moby-dick/moby-dick.epub");
-  var rendition = book.renderTo("viewer", {
+  let book = ePub(url || "https://s3.amazonaws.com/moby-dick/moby-dick.epub");
+  let rendition = book.renderTo("viewer", {
     width: "100%",
     height: "100%",
+    spread: spread,
   });
 
   rendition.display(currentSectionIndex);
 
   book.ready.then(function () {
 
-    var next = document.getElementById("next");
+    let next = document.getElementById("next");
 
     next.addEventListener("click", function (e) {
       book.package.metadata.direction === "rtl" ? rendition.prev() : rendition.next();
       e.preventDefault();
     }, false);
 
-    var prev = document.getElementById("prev");
+    let prev = document.getElementById("prev");
     prev.addEventListener("click", function (e) {
       book.package.metadata.direction === "rtl" ? rendition.next() : rendition.prev();
       e.preventDefault();
     }, false);
 
-    var keyListener = function (e) {
+    let keyListener = function (e) {
 
       // Left Key
       if ((e.keyCode || e.which) == 37) {
@@ -46,20 +48,20 @@
 
   })
 
-  var title = document.getElementById("title");
+  let title = document.getElementById("title");
 
   rendition.on("rendered", function (section) {
-    var current = book.navigation && book.navigation.get(section.href);
+    let current = book.navigation && book.navigation.get(section.href);
 
     if (current) {
-      var $select = document.getElementById("toc");
-      var $selected = $select.querySelector("option[selected]");
+      let $select = document.getElementById("toc");
+      let $selected = $select.querySelector("option[selected]");
       if ($selected) {
         $selected.removeAttribute("selected");
       }
 
-      var $options = $select.querySelectorAll("option");
-      for (var i = 0; i < $options.length; ++i) {
+      let $options = $select.querySelectorAll("option");
+      for (let i = 0; i < $options.length; ++i) {
         let selected = $options[i].getAttribute("ref") === current.href;
         if (selected) {
           $options[i].setAttribute("selected", "");
@@ -72,8 +74,8 @@
   rendition.on("relocated", function (location) {
     console.log(location);
 
-    var next = book.package.metadata.direction === "rtl" ? document.getElementById("prev") : document.getElementById("next");
-    var prev = book.package.metadata.direction === "rtl" ? document.getElementById("next") : document.getElementById("prev");
+    let next = book.package.metadata.direction === "rtl" ? document.getElementById("prev") : document.getElementById("next");
+    let prev = book.package.metadata.direction === "rtl" ? document.getElementById("next") : document.getElementById("prev");
 
     if (location.atEnd) {
       next.style.visibility = "hidden";
@@ -105,11 +107,11 @@
   });
 
   book.loaded.navigation.then(function (toc) {
-    var $select = document.getElementById("toc"),
+    let $select = document.getElementById("toc"),
       docfrag = document.createDocumentFragment();
 
     toc.forEach(function (chapter) {
-      var option = document.createElement("option");
+      let option = document.createElement("option");
       option.textContent = chapter.label;
       option.setAttribute("ref", chapter.href);
 
@@ -119,7 +121,7 @@
     $select.appendChild(docfrag);
 
     $select.onchange = function () {
-      var index = $select.selectedIndex,
+      let index = $select.selectedIndex,
         url = $select.options[index].getAttribute("ref");
       rendition.display(url);
       return false;
