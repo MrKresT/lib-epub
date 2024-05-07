@@ -7,7 +7,7 @@
   //двухколонковость (both, none)
   let spread = (params && params.get("spread")) ? params.get("spread") : 'none';
   let width = (params && params.get("width")) ? params.get("width") : '100%';
-  let height = (params && params.get("height")) ? params.get("height") : '98%';
+  let height = (params && params.get("height")) ? params.get("height") : undefined;
 
 
   // Load the opf for example
@@ -98,11 +98,11 @@
     }
 
     let handleSwipeGesture = function () {
-      if (touchendX < touchstartX && Math.abs(touchstartY - touchendY) < 20) {
+      if (touchendX < touchstartX && Math.abs(touchstartY - touchendY) < 40) {
         rendition.next();
       }
 
-      if (touchendX > touchstartX && Math.abs(touchstartY - touchendY) < 20) {
+      if (touchendX > touchstartX && Math.abs(touchstartY - touchendY) < 40) {
         rendition.prev();
       }
 
