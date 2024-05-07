@@ -6,24 +6,34 @@
 
 <!--  подключаем скрипт библиотеки-->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
-  <script src="https://rawcdn.githack.com/MrKresT/lib-epub/1a5d51f5f67e0aff144a90e88dd1a84659863ced/libs/epub.js"></script>
+<!--  lib-->
+<!--  <script src="https://rawcdn.githack.com/MrKresT/lib-epub/1a5d51f5f67e0aff144a90e88dd1a84659863ced/libs/epub.js"></script>-->
+<!--  lib min-->
+  <script src="https://rawcdn.githack.com/MrKresT/lib-epub/61b26a65ebe859f8058b603fcc1709152e0c3bc7/libs/epub.min.js"></script>
 
-  <script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/detect_swipe/2.1.1/jquery.detect_swipe.min.js"></script>
-
-    <link rel="stylesheet" type="text/css" href="https://rawcdn.githack.com/MrKresT/lib-epub/1a5d51f5f67e0aff144a90e88dd1a84659863ced/css/style-examples.css">
+<!--  css взят с примеров с https://github.com/futurepress/epub.js-->
+    <link rel="stylesheet" type="text/css" href="https://rawcdn.githack.com/MrKresT/lib-epub/61b26a65ebe859f8058b603fcc1709152e0c3bc7/css/style-examples.css">
 <!--  <link rel="stylesheet" type="text/css" href="./css/style-examples.css">-->
 
 </head>
 <body>
+<!--селект с содержанием-->
 <select id="toc"></select>
+<!--сама книга-->
 <div id="viewer" class="spreads"></div>
+<!--кнопки листания -->
 <a id="prev" href="#prev" class="arrow">‹</a>
 <a id="next" href="#next" class="arrow">›</a>
 
+<!--загрузка скрипта, работающего на основе библиотеки-->
+<!--с локальной папки-->
 <!--<script src="./js/open-epub.js"></script>-->
-<script src="https://rawcdn.githack.com/MrKresT/lib-epub/2580559807c3e86ad1deb1d14f718793d247a94e/js/open-epub.js">
+<!--с внешнего урла-->
+<script src="https://rawcdn.githack.com/MrKresT/lib-epub/61b26a65ebe859f8058b603fcc1709152e0c3bc7/js/open-epub.js">
 </script>
 
+<script>
+//можно в это место вставить код из скрипта ./js/open-epub.js
+</script>
 </body>
 </html>
