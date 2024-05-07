@@ -7,30 +7,24 @@
   //двухколонковость (both, none)
   let spread = (params && params.get("spread")) ? params.get("spread") : 'none';
   let width = (params && params.get("width")) ? params.get("width") : '100%';
-  let height = (params && params.get("height")) ? params.get("height") : undefined;
-  let manager = (params && params.get("manager")) ? params.get("manager") : 'default';
+  let height = (params && params.get("height")) ? params.get("height") : '98%';
 
 
-// Load the opf
+  // Load the opf for example
   let book = ePub(url || "https://s3.amazonaws.com/moby-dick/moby-dick.epub");
+
   let rendition = book.renderTo("viewer", {
     width: width,
     height: height,
     spread: spread,
-    manager: manager,
-    // flow: "paginated",
-    // manager: "continuous",
-    // flow: "paginated",
-    // width: "100%",
-    // height: "100%",
-    // snap: true
-
   });
 
   rendition.display(currentSectionIndex);
 
+  //книга загрузилась
   book.ready.then(function () {
 
+    //подключение событий к стрелкам на экране
     let next = document.getElementById("next");
 
     next.addEventListener("click", function (e) {
@@ -44,8 +38,8 @@
       e.preventDefault();
     }, false);
 
+    //подключение событий к стрелкам на клавиатуре
     let keyListener = function (e) {
-
       // Left Key
       if ((e.keyCode || e.which) == 37) {
         book.package.metadata.direction === "rtl" ? rendition.next() : rendition.prev();
@@ -60,22 +54,14 @@
 
     rendition.on("keyup", keyListener);
     document.addEventListener("keyup", keyListener, false);
-
-    window.addEventListener("swipeleft", function (event) {
-      console.log('<----');
-      rendition.next();
-    });
-
-    window.addEventListener("swiperight", function (event) {
-      console.log('---->');
-      rendition.prev();
-    });
-
   })
 
   let title = document.getElementById("title");
 
+  //произошли изменения в отображении книги (перешли на другую страницу)
   rendition.on("rendered", function (section) {
+
+    //корректировка отображения текущего раздела в селекте
     let current = book.navigation && book.navigation.get(section.href);
 
     if (current) {
@@ -94,10 +80,46 @@
       }
     }
 
+    //обработка свайпов
+    let touchstartX = 0;
+    let touchstartY = 0;
+    let touchendX = 0;
+    let touchendY = 0;
+
+    let handleTouchStart = function (event) {
+      touchstartX = event.changedTouches[0].screenX;
+      touchstartY = event.changedTouches[0].screenY;
+    }
+
+    let handleTouchEnd = function (event) {
+      touchendX = event.changedTouches[0].screenX;
+      touchendY = event.changedTouches[0].screenY;
+      handleSwipeGesture();
+    }
+
+    let handleSwipeGesture = function () {
+      if (touchendX < touchstartX && Math.abs(touchstartY - touchendY) < 20) {
+        rendition.next();
+      }
+
+      if (touchendX > touchstartX && Math.abs(touchstartY - touchendY) < 20) {
+        rendition.prev();
+      }
+
+      // после обработки свайпа обнуляем значения
+      touchstartX = 0;
+      touchendX = 0;
+      touchstartY = 0;
+      touchendY = 0;
+    }
+
+    let el = document.querySelector("iframe");
+    el.contentWindow.document.addEventListener('touchstart', handleTouchStart, false);
+    el.contentWindow.document.addEventListener('touchend', handleTouchEnd, false);
+
   });
 
   rendition.on("relocated", function (location) {
-    console.log(location);
 
     let next = book.package.metadata.direction === "rtl" ? document.getElementById("prev") : document.getElementById("next");
     let prev = book.package.metadata.direction === "rtl" ? document.getElementById("next") : document.getElementById("prev");
@@ -132,6 +154,7 @@
   });
 
   book.loaded.navigation.then(function (toc) {
+    //формирование списка для выбора содержимого
     let $select = document.getElementById("toc"),
       docfrag = document.createDocumentFragment();
 
